@@ -1,0 +1,5 @@
+const url=()=>{const u=process.env.SUPABASE_URL;if(!u)throw Error('SUPABASE_URL 설정 필요');return u.replace(/\/$/,'')+'/rest/v1/app_state'};
+async function query(method,body){const key=process.env.SUPABASE_SERVICE_ROLE_KEY;if(!key)throw Error('SUPABASE_SERVICE_ROLE_KEY 설정 필요');const r=await fetch(url()+'?id=eq.1',{method,headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json',Prefer:'return=representation'},body:body?JSON.stringify(body):undefined});const txt=await r.text();if(!r.ok)throw Error('클라우드 DB 오류 '+r.status+': '+txt.slice(0,180));return txt?JSON.parse(txt):[]}
+export async function readState(){const x=await query('GET');if(!x.length)throw Error('Supabase app_state 초기화 SQL을 실행해 주세요.');return x[0].body}
+export async function writeState(data){const x=await query('PATCH',{body:data});if(!x.length)throw Error('DB 저장에 실패했습니다.');return true}
+export function validateState(s){return s&&typeof s==='object'&&!Array.isArray(s)&&Array.isArray(s.projects)&&Array.isArray(s.designs)&&Array.isArray(s.rules)&&s.brand&&typeof s.brand==='object'&&Array.isArray(s.chat)}

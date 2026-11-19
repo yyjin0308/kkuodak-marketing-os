@@ -1,0 +1,1 @@
+import {gate} from '../lib/auth.js';export default function handler(req,res){if(!gate(req,res))return;res.json({ai_configured:!!process.env.OPENAI_API_KEY,model:process.env.OPENAI_MODEL||'gpt-4.1-mini'})}

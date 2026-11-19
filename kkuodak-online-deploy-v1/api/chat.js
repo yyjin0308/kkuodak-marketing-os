@@ -1,0 +1,1 @@
+import {gate,method} from '../lib/auth.js';import {askAI} from '../lib/ai.js';export default async function handler(req,res){if(!gate(req,res)||!method(req,res,'POST'))return;try{res.json({result:await askAI(req,'chat')})}catch(e){res.status(400).json({error:e.message})}}
